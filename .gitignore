@@ -1,0 +1,10 @@
+assets/font/*
+assets/img/*
+assets/sfx/*
+assets/music/*
+
+lib/hump/*.lua
+
+lib/love/*.exe
+lib/love/*.dll
+
