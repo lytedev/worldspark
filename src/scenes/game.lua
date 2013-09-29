@@ -8,7 +8,7 @@ Game scene.
 
 ]]--
 
-local Game = Gamestate.new()
+local Game = {}
 
 local Server = require("src.net.server")
 local Client = require("src.net.client")
@@ -26,7 +26,10 @@ function Game:init()
 	self.netTimer = 0
 	self.netUpdateTime = (1 / config.networkUPS)
 
-	self:startSingleplayer()
+	console.input = "/sp"
+	console.inputCursor = #console.input
+	console:toggle()
+	console.size[2] = -30
 end
 
 function Game:update(dt)
@@ -64,6 +67,11 @@ function Game:startSingleplayer()
 	end
 end
 
+function Game:disconnect()
+	-- TODO: Send d/c packet(s)
+	
+end
+
 function Game:keypressed(k, u)
 	if k == "tab" then
 		console:toggle()
@@ -77,8 +85,12 @@ function Game:draw()
 	love.graphics.setFont(assetManager:getFont("px8"))
 	local y = love.graphics.getHeight() - love.graphics.getFont():getHeight() - 5
 	love.graphics.setColor(255, 255, 255, 128)
-	love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 5, y)
+	love.graphics.print("FPS: " .. tostring(love.timer.getFPS()) .. " | CMD: " .. tostring(console.currentCommand) .. ": " .. console.commands[console.currentCommand], 5, y)
 	console:draw()
+end
+
+function Game:__tostring()
+	return "lol"
 end
 
 return Game

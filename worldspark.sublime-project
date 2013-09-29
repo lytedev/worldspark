@@ -25,7 +25,7 @@
 			},
 			"linux":
 			{
-				"cmd": ["${project_path}/build.sh", "${project_base_name}", "${project_path}"]
+				"cmd": ["sh", "${project_path}/build.sh", "${project_base_name}", "${project_path}"]
 			}
 		}
 	],

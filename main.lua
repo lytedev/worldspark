@@ -24,9 +24,16 @@ function love.load(args)
 		print("Args: " .. table.concat(args, "\n"))
 	end
 
-	dofile(assetManager:createScriptPath("init"))
 	Gamestate.registerEvents()
 	Gamestate.switch(require("src.scenes.game"))
+
+	require("io")
+	print(Gamestate:current())
+	old_print("Loading init script...")
+	io.flush()
+	dofile(assetManager:createScriptPath("init"))
+	old_print("Loaded init script")
+	io.flush()
 end
 
 function love.keypressed(k, u)

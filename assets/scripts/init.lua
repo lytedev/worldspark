@@ -1,7 +1,10 @@
 console:add("Console: Running init script...")
 
-function getGamestate()
-	return Gamestate.current
+function cmd_sp(addr, port)
+	local g = Gamestate.state
+	g:startSingleplayer()
+	-- print("Console: " .. tostring(g))
+	-- .current:startSingleplayer()
 end
 
-verily_I_say = 21358
+console:bindCommand("sp", cmd_sp)

@@ -28,10 +28,13 @@ function Console:init(font, height)
 	self.size = {1, -10}
 	self.margin = {0, 0}
 
-	self.commands = {}
+	self.currentCommand = 2
+	self.commands = {"", ""}
 	self.commandHistory = 50
 	self.inputCursor = 1
 	self.input = ""
+	self.commandPrefix = '/'
+    love.keyboard.setKeyRepeat(0.4, 0.02)
 
 	self.timestampColor = {255, 255, 255, 50}
 	self.backgroundColor = {17, 17, 17, 255}
@@ -56,6 +59,8 @@ function Console:init(font, height)
 	self.textColors = {
 		normal={255, 255, 255, 100}
 	}
+
+	self.commandHandler = {}
 end
 
 function Console:setFont(font, height)
@@ -206,7 +211,13 @@ function Console:keypressed(k, u)
 		--end
 	end
 
-	if love.keyboard.isDown("lctrl", "rctrl") then
+	if love.keyboard.isDown("lalt", "ralt") and love.keyboard.isDown("lctrl", "rctrl") then
+		if k == "up" or k == "pageup" then
+			self.scroll = 1000000000
+		elseif k == "down" or k == "pagedown" then
+			self.scroll = 0
+		end	
+	elseif love.keyboard.isDown("lctrl", "rctrl") then
 		if k == "up" then
 			self.scroll = self.scroll + 1
 		elseif k == "down" then
@@ -216,6 +227,10 @@ function Console:keypressed(k, u)
 		if k == "backspace" and self.inputCursor > 0 and string.len(self.input) >= 1 then
 			self.input = string.sub(self.input, 0, self.inputCursor - 1) .. string.sub(self.input, self.inputCursor + 1, string.len(self.input))
 			self.inputCursor = self.inputCursor - 1
+		elseif k == "up" then
+			self:loadCommand(self.currentCommand + 1)
+		elseif k == "down" then
+			self:loadCommand(self.currentCommand - 1)
 		elseif k == "left" then
 			self.inputCursor = self.inputCursor - 1
 		elseif k == "right" then
@@ -230,6 +245,18 @@ function Console:keypressed(k, u)
 			local ui = string.char(u)
 			self.input = string.insert(self.input, ui, self.inputCursor)
 			self.inputCursor = self.inputCursor + string.len(ui)
+		elseif self.size[2] < 0 then
+			if k == "pageup" then
+				self.scroll = self.scroll - (self.size[2] / 2)
+			elseif k == "pagedown" then
+				self.scroll = self.scroll + (self.size[2] / 2)
+			end
+		else
+			if k == "pageup" then
+				self.scroll = self.scroll - 5
+			elseif k == "pagedown" then
+				self.scroll = self.scroll + 5
+			end
 		end
 	end
 	if self.inputCursor < 0 then
@@ -239,19 +266,92 @@ function Console:keypressed(k, u)
 	end
 end
 
+function Console:addCommand(input)
+	if input == '' then return end
+	table.insert(self.commands, 3, input)
+	self.currentCommand = 2
+	while #self.commands > self.commandHistory do
+		table.remove(self.commands, self.commandHistory + 1)
+	end
+	-- self:add("Command: " .. input .. " (" .. self.currentCommand .. "/" .. #self.commands .. ") " .. table.concat(self.commands))
+end
+
+function Console:loadCommand(ci)
+	if self.currentCommand ~= 1 then
+		self.commands[self.currentCommand] = self.input
+	end
+	self.currentCommand = ci or self.currentCommand
+	if self.currentCommand < 1 --[[ or (self.currentCommand < 2 and self.commands[2] == '') ]] then
+		self.currentCommand = #self.commands
+	elseif self.currentCommand > #self.commands then
+		self.currentCommand = 1
+	end
+	self.input = self.commands[self.currentCommand]
+	self.inputCursor = #self.input
+end
+
+function Console:processCommand(input)
+	local input = tostring(input)
+	local command = string.match(input, "^(%a+)%s*")
+	input = string.trim(string.sub(input, string.len(command) + 1))
+	if not input then
+		self:runCommand(command)
+		return
+	end
+
+	local args = {}
+	while true do
+		local m = nil
+		local cutter = nil
+		local cutter = string.match(input, '^(["\'].-["\']%s*)')
+		local m = string.match(input, '^["\'](.-)["\']%s*')
+		if not m then 
+			cutter = string.match(input, 	'^([^%s]+)')
+			m = string.match(input, 		'^([^%s]+)') 
+		end
+		if m == nil or #args > 20 then
+			break
+		else
+			table.insert(args, string.trim(m))
+			input = string.trim(string.sub(input, string.len(cutter) + 1, string.len(input)))
+		end
+	end
+
+	self:runCommand(command, args)
+end
+
+function Console:runCommand(cmd, args)
+	local f = self.commandHandler[cmd]
+	if f then
+		return f(unpack(args))
+	end
+end
+
 function Console:handleInput(i)
 	local i = i or self.input
 	local isInput = false
+	if string.trim(i) == '' then
+		return
+	end
 	if i == self.input then
 		isInput = true
 	end
 
-	dostring(self.input)
+	self:addCommand(self.input)
+	if string.sub(self.input, 0, 1) == self.commandPrefix then
+		self:processCommand(string.sub(self.input, string.len(self.commandPrefix) + 1))
+	else
+		dostring(self.input)
+	end
 
 	if isInput then
 		self.input = ''
 		self.inputCursor = 0
 	end
+end
+
+function Console:bindCommand(cmd, func)
+	self.commandHandler[cmd] = func
 end
 
 return Console
