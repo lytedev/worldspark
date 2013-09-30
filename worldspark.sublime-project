@@ -5,15 +5,15 @@
 			"cmd":
 			[
 				"${project_path}/lib/love/love",
-				"${project_path}",
+				"${project_path}"
 			],
 			"linux":
 			{
 				"cmd":
 				[
 					"love",
-					"${project_path}",
-				],
+					"${project_path}"
+				]
 			},
 			"name": "Test LOVE2D Project"
 		},
