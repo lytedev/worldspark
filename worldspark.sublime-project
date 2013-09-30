@@ -21,11 +21,11 @@
 			"name": "Compile LOVE2D Project",
 			"windows":
 			{
-				"cmd": ["${project_path}/build.bat", "${project_base_name}", "${project_path}"]
+				"cmd": ["${project_path}/build.bat", "${project_base_name}", "${project_path};", "bin/${project_base_name}.exe"]
 			},
 			"linux":
 			{
-				"cmd": ["sh", "${project_path}/build.sh", "${project_base_name}", "${project_path}"]
+				"cmd": ["sh", "${project_path}/build.sh", "${project_base_name}", "${project_path};", "love", "bin/${project_base_name}.love"]
 			}
 		}
 	],

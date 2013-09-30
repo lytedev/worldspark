@@ -8,3 +8,4 @@ lib/hump/*.lua
 lib/love/*.exe
 lib/love/*.dll
 
+bin/*

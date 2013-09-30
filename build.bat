@@ -20,8 +20,3 @@ copy "lib\love\*.dll" "bin\"
 :: Binary copy zip with the LOVE2D executable
 echo Building Windows executable...
 copy /b "lib\love\love.exe"+"bin\%1.love" "bin\%1.exe"
-
-:: Run
-echo Running...
-echo.
-"bin\%1.exe"

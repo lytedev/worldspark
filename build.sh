@@ -10,8 +10,3 @@ mkdir bin;
 # Zip up the project
 echo "Building .love file...";
 7z a bin/$1.love;
-
-# Run
-echo "Running...";
-echo "";
-love bin/$1.love;
