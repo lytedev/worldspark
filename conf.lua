@@ -11,7 +11,6 @@ Sets the default configuration values for the LOVE2D framework.
 function love.run()
 
     math.randomseed(os.time())
-    math.random() math.random()
 
     if love.load then love.load(arg) end
 
@@ -191,4 +190,8 @@ function dostring(str)
 			print("Console: " .. tostring(result))
 		end
 	end
+end
+
+function table.address(t)
+    return tostring(t):sub(8)
 end

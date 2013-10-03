@@ -20,16 +20,33 @@ function Game:init()
 	local sans11 = assetManager:getFont('opensans_light', 20, 'sans11')
 	local px8 = assetManager:getFont('pf_tempesta_seven_condensed', 8, 'px8')
 	local pxs8 = assetManager:getFont('pf_westa_seven_condensed', 8, 'pxs8')
+
+	self.name = "game" -- All gamestates should have a name with which scripts can identify the current gamestate
 	
+	local Camera = require("lib.hump.camera")
+	self.camera = Camera()
+	self.camera:zoomTo(2)
+
 	console:setFont(px8, 10)
 
 	self.netTimer = 0
 	self.netUpdateTime = (1 / config.networkUPS)
 
-	console.input = "/sp"
-	console.inputCursor = #console.input
-	console:toggle()
-	console.size[2] = -30
+	local Sprite = require("src.gameobject.sprite")
+	local AnimationGroup = require("src.animation.group")
+	local AnimationSet = require("src.animation.set")
+	local AnimationFrame = require("src.animation.frame")
+
+	local frames = AnimationFrame.generate(16, 16, 64, 32, 2, 0.1)
+	local animSet = AnimationSet(frames)
+	local animGroup = AnimationGroup({
+		{"default", animSet}
+		})
+	local blueFire = assetManager:getImage("blue_fire")
+	self.testSprite = Sprite(blueFire, animGroup)
+
+	-- console:toggle()
+	console.size[2] = -15
 end
 
 function Game:update(dt)
@@ -37,11 +54,25 @@ function Game:update(dt)
 		love.event.quit()
 	end
 
+	self.testSprite:update(dt)
+
 	self.netTimer = self.netTimer + dt
 	if self.netTimer > self.netUpdateTime then
 		self:netUpdate(dt)
 		self.netTimer = self.netTimer - ((math.floor(self.netTimer / self.netUpdateTime)) * self.netUpdateTime)
 	end
+end
+
+function Game:draw()
+	self.camera:attach()
+	self.testSprite:draw()
+	self.camera:detach()
+
+	love.graphics.setFont(assetManager:getFont("px8"))
+	local y = love.graphics.getHeight() - love.graphics.getFont():getHeight() - 5
+	love.graphics.setColor(255, 255, 255, 128)
+	love.graphics.print("FPS: " .. tostring(love.timer.getFPS()) .. " | CMD: " .. tostring(console.currentCommand) .. ": " .. console.commands[console.currentCommand], 5, y)
+	console:draw()
 end
 
 function Game:netUpdate(dt)
@@ -53,23 +84,51 @@ function Game:netUpdate(dt)
 	end
 end
 
-function Game:startSingleplayer()
+function Game:startSingleplayer(port)
+	print("Game: Starting singleplayer")
+	self:host("127.0.0.1", port)
+end
+
+function Game:host(addr, port)
+	local addr = addr or "*"
+	local port = port or 8888
 	if self.server then
 		print("Server: You are already hosting a server!")
 	elseif self.client then
 		print("Client: You are already connected to a server!")
 	else
-		print("Game: Starting singleplayer")
 		self.server = Server()
-		self.server:host()
+		self.server:host(addr, port)
+		if addr == '*' then 
+			addr = '127.0.0.1'
+		end
 		self.client = Client()
-		self.client:connect()
+		self.client:connect(addr, port)
+	end
+end
+
+function Game:join(addr, port)
+	local addr = addr or "*"
+	local port = port or 8888
+	if self.server then
+		print("Server: You are already hosting a server!")
+	elseif self.client then
+		print("Client: You are already connected to a server!")
+	else
+		if addr == '*' then 
+			addr = '127.0.0.1'
+		end
+		self.client = Client()
+		self.client:connect(addr, port)
 	end
 end
 
 function Game:disconnect()
 	-- TODO: Send d/c packet(s)
-	
+	self.server = nil
+	self.client = nil
+	print("Client: Disconnected")
+	print("Server: Closed")
 end
 
 function Game:keypressed(k, u)
@@ -79,18 +138,6 @@ function Game:keypressed(k, u)
 	if console.stealInput then
 		return
 	end
-end
-
-function Game:draw()
-	love.graphics.setFont(assetManager:getFont("px8"))
-	local y = love.graphics.getHeight() - love.graphics.getFont():getHeight() - 5
-	love.graphics.setColor(255, 255, 255, 128)
-	love.graphics.print("FPS: " .. tostring(love.timer.getFPS()) .. " | CMD: " .. tostring(console.currentCommand) .. ": " .. console.commands[console.currentCommand], 5, y)
-	console:draw()
-end
-
-function Game:__tostring()
-	return "lol"
 end
 
 return Game

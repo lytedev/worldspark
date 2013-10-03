@@ -22,6 +22,7 @@ function Console:init(font, height)
 	self.messageNewline = false
 	self.padding = {5, 5}
 	self.timestampFormat = "%H:%M:%S"
+	self.maxMessages = 500
 	self.messages = {}
 	self.scroll = 0
 	self.canDisplay = 1
@@ -44,7 +45,7 @@ function Console:init(font, height)
 
 	self.typeColors = {
 		normal={255, 255, 255, 100}, 
-		["n/a"]={255, 255, 255, 255},
+		["n/a"]={255, 0, 255, 255},
 		server={120, 150, 100, 255}, 
 		client={0, 150, 150, 255}, 
 		game={0, 100, 200, 255}, 
@@ -61,6 +62,7 @@ function Console:init(font, height)
 	}
 
 	self.commandHandler = {}
+	self.commandAliases = {}
 end
 
 function Console:setFont(font, height)
@@ -87,6 +89,12 @@ function Console:add(text)
 	local msg = {text = text, timestamp = os.date(self.timestampFormat), from = from or "N/A"}
 	msg.from = string.lower(msg.from)
 	table.insert(self.messages, msg)
+	while #self.messages > self.maxMessages do
+		table.remove(self.messages, 1)
+	end
+	if self.scroll > 1 then 
+		self.scroll = self.scroll + 1
+	end
 	return msg
 end
 
@@ -291,8 +299,11 @@ function Console:loadCommand(ci)
 end
 
 function Console:processCommand(input)
+	if input == nil or input == '' then
+		return
+	end
 	local input = tostring(input)
-	local command = string.match(input, "^(%a+)%s*")
+	local command = string.match(input, "^([^%s]+)%s*")
 	input = string.trim(string.sub(input, string.len(command) + 1))
 	if not input then
 		self:runCommand(command)
@@ -321,9 +332,13 @@ function Console:processCommand(input)
 end
 
 function Console:runCommand(cmd, args)
+	local cmd = self:getAlias(cmd) or cmd
+	local args = args or {}
 	local f = self.commandHandler[cmd]
 	if f then
-		return f(unpack(args))
+		return f.callback(unpack(args))
+	else
+		print("Error: Could not find command '" .. cmd .. "'")
 	end
 end
 
@@ -337,11 +352,15 @@ function Console:handleInput(i)
 		isInput = true
 	end
 
-	self:addCommand(self.input)
-	if string.sub(self.input, 0, 1) == self.commandPrefix then
-		self:processCommand(string.sub(self.input, string.len(self.commandPrefix) + 1))
+	if i == 'help' then
+		i = '/help'
+	end
+
+	self:addCommand(i)
+	if string.sub(i, 0, 1) == self.commandPrefix then
+		self:processCommand(string.sub(i, string.len(self.commandPrefix) + 1))
 	else
-		dostring(self.input)
+		dostring(i)
 	end
 
 	if isInput then
@@ -350,8 +369,39 @@ function Console:handleInput(i)
 	end
 end
 
-function Console:bindCommand(cmd, func)
-	self.commandHandler[cmd] = func
+function Console:help()
+	self:add("Console: Try '/commands' to see a list of commands!\nTry '/command <command>' to see details of that command'\nExample: '/command host'")
+end
+
+function Console:createAlias(alias, command)
+	self.commandAliases[alias] = command
+end
+
+function Console:getAlias(alias)
+	return self.commandAliases[alias] or alias
+end
+
+function Console:bindCommand(cmd, f)
+	if not cmd.command and not f then 
+		print("Console: Tried to add blank command")
+		return
+	elseif cmd and not f then
+		
+	else
+		cmd = {command = cmd, callback = f}
+	end
+
+	cmd.name = cmd.name or "Anonymous Command"
+	cmd.args = cmd.args or nil
+	cmd.description = cmd.description or "No description."
+
+	if cmd.aliases then
+		for i, v in ipairs(cmd.aliases) do
+			self:createAlias(v, cmd.command)
+		end
+	end
+
+	self.commandHandler[cmd.command] = cmd
 end
 
 return Console

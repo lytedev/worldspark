@@ -21,6 +21,7 @@ function Server:init(addr, port)
 	self.packetHandler[1] = function(self, packet, ip, port) -- Initial connection request
 		local s = packet:readString()
 		if s == self.initialHandshake then
+			print(string.format("Server: Client connected from %s:%i", ip, port))
 			local p = Packet(2)
 			p:addString("Dat Server")
 			self:sendPacket(p, ip, port)

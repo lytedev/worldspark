@@ -10,30 +10,34 @@ Game entry point.
 
 Gamestate = require("lib.hump.gamestate")
 Class = require("lib.hump.class")
-
+vector = require("lib.hump.vector")
 assetManager = require("lib.assetmanager")()
 defaultFont = love.graphics.newFont(9)
 console = require("lib.console")(defaultFont, 10)
+hooks = require("src.hooks")
 old_print = print
 print = function(msg, from)
 	console:add(msg, from)
 end
 
-function love.load(args)
-	if not release then
-		print("Args: " .. table.concat(args, "\n"))
-	end
+local __newImage = love.graphics.newImage
 
+function love.graphics.newImage( ... )
+   local img = __newImage( ... )
+   img:setFilter( 'nearest', 'nearest' )
+   return img
+end
+
+function love.graphics.newSmoothImage( ... )
+    return __newImage( ... )
+end
+
+function love.load(args)
 	Gamestate.registerEvents()
 	Gamestate.switch(require("src.scenes.game"))
+	hooks.registerLoveCallbacks()
 
-	require("io")
-	print(Gamestate:current())
-	old_print("Loading init script...")
-	io.flush()
 	dofile(assetManager:createScriptPath("init"))
-	old_print("Loaded init script")
-	io.flush()
 end
 
 function love.keypressed(k, u)

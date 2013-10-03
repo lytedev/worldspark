@@ -21,7 +21,9 @@ function Server:init(addr, port)
 	self.packetHandler = {}
 end
 
-function Server:host()
+function Server:host(addr, port)
+	self.address = addr or "*"
+	self.port = port or 8888
 	self.sock:settimeout(0)
 	self.sock:setsockname(self.address, self.port)
 	self.hosting = true
