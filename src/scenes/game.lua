@@ -17,7 +17,7 @@ local Packet = require("lib.net.packet")
 settings = {}
 
 function Game:init()
-	local sans11 = assetManager:getFont('OpenSans-Light', 20, 'sans11')
+	local sans11 = assetManager:getFont('opensans_light', 20, 'sans11')
 	local px8 = assetManager:getFont('pf_tempesta_seven_condensed', 8, 'px8')
 	local pxs8 = assetManager:getFont('pf_westa_seven_condensed', 8, 'pxs8')
 
@@ -37,13 +37,15 @@ function Game:init()
 	local AnimationSet = require("src.animation.set")
 	local AnimationFrame = require("src.animation.frame")
 
-	local frames = AnimationFrame.generate(16, 16, 64, 32, 2, 0.1)
+	local frames = AnimationFrame.generate(128, 128, 128 * 8, 128 * 8, 8 * 8, 0.05)
 	local animSet = AnimationSet(frames)
 	local animGroup = AnimationGroup({
 		{"default", animSet}
 		})
-	local blueFire = assetManager:getImage("blue_fire")
+	local blueFire = assetManager:getImage("explosion/explosionframes")
 	self.testSprite = Sprite(blueFire, animGroup)
+
+  self.camera:lookAt((self.testSprite.position + (vector(128, 128) / 2)):unpack())
 
 	-- console:toggle()
 	console.size[2] = -15
@@ -138,6 +140,9 @@ function Game:keypressed(k, u)
 	if console.stealInput then
 		return
 	end
+  if k == "r" then
+    Game.init(Game)
+  end
 end
 
 return Game
