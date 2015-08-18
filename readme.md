@@ -33,4 +33,4 @@ You will need the 7zip binary to build, and the LÖVE binary to run it. On Arch 
 [32bit]: https://bitbucket.org/rude/love/downloads/love-0.8.0-win-x86.zip
 [64bit]: https://bitbucket.org/rude/love/downloads/love-0.8.0-win-x64.zip
 [Run 7zip from the command line]: http://stackoverflow.com/questions/14122732/unzip-files-7-zip-via-cmd-command
->>>>>>> a481141ecce7a2ecd4c07c7d428301776ae7b286:readme.md
+
