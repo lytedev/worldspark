@@ -8,6 +8,8 @@ A test script for the scripting engine.
 
 ]]--
 
+print("Commands!")
+
 local cmd_commands = {
 	command = "commands",
 	aliases = {"command", "cmd"},

@@ -43,6 +43,12 @@ function Console:init(font, height)
 	self.inputColor = {255, 255, 255, 255}
 	self.inactiveInputColor = {255, 255, 255, 128}
 
+	self.logFileTimeStampFormat = "%Y-%m-%d_%H-%M-%S"
+	self.logTimeStampFormat = "%Y-%m-%d %H:%M:%S"
+	love.filesystem.mkdir("logs")
+	self.logFile = love.filesystem.newFile("logs/" .. os.date(self.logFileTimeStampFormat) .. "_" .. config.identity .. ".log")
+	self.logFile:open("a")
+
 	self.typeColors = {
 		normal={255, 255, 255, 100}, 
 		["n/a"]={255, 0, 255, 255},
@@ -86,7 +92,9 @@ function Console:add(text)
 		text = string.sub(text, string.len(from))
 		from = string.sub(from, 0, -3)
 	end
-	local msg = {text = text, timestamp = os.date(self.timestampFormat), from = from or "N/A"}
+	from = from or "N/A"
+	self.logFile:write("[" .. os.date(self.logTimeStampFormat) .. "] " .. from .. ": " .. text .. "\r\n")
+	local msg = {text = text, timestamp = os.date(self.timestampFormat), from = from}
 	msg.from = string.lower(msg.from)
 	table.insert(self.messages, msg)
 	while #self.messages > self.maxMessages do

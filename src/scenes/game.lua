@@ -32,17 +32,17 @@ function Game:init()
 	self.netTimer = 0
 	self.netUpdateTime = (1 / config.networkUPS)
 
-	local Sprite = require("src.gameobject.sprite")
-	local AnimationGroup = require("src.animation.group")
-	local AnimationSet = require("src.animation.set")
-	local AnimationFrame = require("src.animation.frame")
+	local Sprite = require("lib.gameobject.sprite")
+	local AnimationGroup = require("lib.animation.group")
+	local AnimationSet = require("lib.animation.set")
+	local AnimationFrame = require("lib.animation.frame")
 
 	local frames = AnimationFrame.generate(16, 16, 64, 32, 2, 0.1)
 	local animSet = AnimationSet(frames)
 	local animGroup = AnimationGroup({
 		{"default", animSet}
 		})
-	local blueFire = assetManager:getImage("blue_fire")
+	local blueFire = assetManager:getImage("ld")
 	self.testSprite = Sprite(blueFire, animGroup)
 
 	-- console:toggle()
