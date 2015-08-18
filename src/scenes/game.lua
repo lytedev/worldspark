@@ -37,13 +37,15 @@ function Game:init()
 	local AnimationSet = require("lib.animation.set")
 	local AnimationFrame = require("lib.animation.frame")
 
-	local frames = AnimationFrame.generate(16, 16, 64, 32, 2, 0.1)
+	local frames = AnimationFrame.generate(128, 128, 128 * 8, 128 * 8, 8 * 8, 0.05)
 	local animSet = AnimationSet(frames)
 	local animGroup = AnimationGroup({
 		{"default", animSet}
 		})
-	local blueFire = assetManager:getImage("ld")
+	local blueFire = assetManager:getImage("explosion/explosionframes")
 	self.testSprite = Sprite(blueFire, animGroup)
+
+  self.camera:lookAt((self.testSprite.position + (vector(128, 128) / 2)):unpack())
 
 	-- console:toggle()
 	console.size[2] = -15
@@ -76,10 +78,10 @@ function Game:draw()
 end
 
 function Game:netUpdate(dt)
-	if self.server then 
+	if self.server then
 		self.server:update(dt)
 	end
-	if self.client then 
+	if self.client then
 		self.client:update(dt)
 	end
 end
@@ -99,7 +101,7 @@ function Game:host(addr, port)
 	else
 		self.server = Server()
 		self.server:host(addr, port)
-		if addr == '*' then 
+		if addr == '*' then
 			addr = '127.0.0.1'
 		end
 		self.client = Client()
@@ -115,7 +117,7 @@ function Game:join(addr, port)
 	elseif self.client then
 		print("Client: You are already connected to a server!")
 	else
-		if addr == '*' then 
+		if addr == '*' then
 			addr = '127.0.0.1'
 		end
 		self.client = Client()
@@ -138,6 +140,9 @@ function Game:keypressed(k, u)
 	if console.stealInput then
 		return
 	end
+  if k == "r" then
+    Game.init(Game)
+  end
 end
 
 return Game

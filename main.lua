@@ -14,22 +14,23 @@ vector = require("lib.hump.vector")
 assetManager = require("lib.assetmanager")()
 defaultFont = love.graphics.newFont(9)
 console = require("lib.console")(defaultFont, 10)
-hooks = require("lib.hooks")
+hooks = require("src.hooks")
 old_print = print
+
 print = function(msg, from)
 	console:add(msg, from)
 end
 
 local __newImage = love.graphics.newImage
 
-function love.graphics.newImage( ... )
-   local img = __newImage( ... )
-   img:setFilter( 'nearest', 'nearest' )
+function love.graphics.newImage(...)
+   local img = __newImage(...)
+   img:setFilter('nearest', 'nearest')
    return img
 end
 
-function love.graphics.newSmoothImage( ... )
-    return __newImage( ... )
+function love.graphics.newSmoothImage(...)
+    return __newImage(...)
 end
 
 function love.load(args)
@@ -47,3 +48,4 @@ end
 function love.update(dt)
 	console:update(dt)
 end
+
