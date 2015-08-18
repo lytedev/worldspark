@@ -1,11 +1,3 @@
-assets/font/*
-assets/img/*
-assets/sfx/*
-assets/music/*
-
 lib/hump
+lib/love
 
-lib/love/*.exe
-lib/love/*.dll
-
-bin/*
