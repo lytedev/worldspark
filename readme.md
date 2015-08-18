@@ -10,9 +10,7 @@
 First, we need the HUMP library.
 
 ```
-#!sh
-cd lib/
-git clone git://github.com/vrld/hump hump
+git clone git://github.com/vrld/hump lib/hump
 ```
 
 Open the sublime-project file in the project root with Sublime Text, select the "Compile LOVE2D Project" build system, and build! You will need the following depending on your platform.
