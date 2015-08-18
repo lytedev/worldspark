@@ -3,7 +3,7 @@ assets/img/*
 assets/sfx/*
 assets/music/*
 
-lib/hump/*.lua
+lib/hump
 
 lib/love/*.exe
 lib/love/*.dll
