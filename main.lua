@@ -14,7 +14,7 @@ vector = require("lib.hump.vector")
 assetManager = require("lib.assetmanager")()
 defaultFont = love.graphics.newFont(9)
 console = require("lib.console")(defaultFont, 10)
-hooks = require("src.hooks")
+hooks = require("lib.hooks")
 old_print = print
 
 print = function(msg, from)
