@@ -17,7 +17,7 @@ local Packet = require("lib.net.packet")
 settings = {}
 
 function Game:init()
-	local sans11 = assetManager:getFont('opensans_light', 20, 'sans11')
+	local sans11 = assetManager:getFont('OpenSans-Light', 20, 'sans11')
 	local px8 = assetManager:getFont('pf_tempesta_seven_condensed', 8, 'px8')
 	local pxs8 = assetManager:getFont('pf_westa_seven_condensed', 8, 'pxs8')
 
