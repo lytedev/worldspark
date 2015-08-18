@@ -2,7 +2,7 @@
 
 ## Dependencies
 
-* [LÖVE][]
+* [LÖVE][] (0.8.x)
 * [HUMP][]
 
 ## Build
@@ -21,7 +21,12 @@ You will need the LÖVE executable and dependencies. Download and extract LÖVE 
 
 ### Linux 
 
-You will need the 7zip binary to build, and the LÖVE binary to run it. On Arch Linux, you can get both with `pacman -S p7zip love`.
+You will need the 7zip binary to build, and the LÖVE binary to run it. On Arch Linux, you can get both with `pacman -S p7zip love08`.
+
+### ToDo
+
+* Update to LÖVE 0.9.x
+
 
 [LÖVE]: https://love2d.org/
 [HUMP]: http://vrld.github.io/hump
