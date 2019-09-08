@@ -10,7 +10,7 @@ A manager for scripting hooks.
 
 local function __NULL__() end
 
-local all_callbacks = { 'update', 'draw', 'focus', 'keypressed', 'keyreleased', 'mousepressed', 'mousereleased', 'joystickpressed', 'joystickreleased', 'quit'}
+local all_callbacks = { 'update', 'draw', 'focus', 'keypressed', 'textinput', 'keyreleased', 'mousepressed', 'mousereleased', 'joystickpressed', 'joystickreleased', 'quit'}
 
 local Hooks = {
 	_hooks = {}

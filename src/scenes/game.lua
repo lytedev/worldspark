@@ -18,8 +18,8 @@ settings = {}
 
 function Game:init()
 	local sans11 = assetManager:getFont('opensans_light', 20, 'sans11')
-	local px8 = assetManager:getFont('pf_tempesta_seven_condensed', 8, 'px8')
-	local pxs8 = assetManager:getFont('pf_westa_seven_condensed', 8, 'pxs8')
+	local px8 = assetManager:getFont('pf_tempesta_seven_condensed', 16, 'px8')
+	local pxs8 = assetManager:getFont('pf_westa_seven_condensed', 16, 'pxs8')
 
 	self.name = "game" -- All gamestates should have a name with which scripts can identify the current gamestate
 	
@@ -27,7 +27,7 @@ function Game:init()
 	self.camera = Camera()
 	self.camera:zoomTo(2)
 
-	console:setFont(px8, 10)
+	console:setFont(px8, 20)
 
 	self.netTimer = 0
 	self.netUpdateTime = (1 / config.networkUPS)

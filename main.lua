@@ -38,11 +38,17 @@ function love.load(args)
 	Gamestate.switch(require("src.scenes.game"))
 	hooks.registerLoveCallbacks()
 
+	love.graphics.scale(1)
+
 	dofile(assetManager:createScriptPath("init"))
 end
 
 function love.keypressed(k, u)
 	console:keypressed(k, u)
+end
+
+function love.textinput(t)
+	console:textinput(t)
 end
 
 function love.update(dt)

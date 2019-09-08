@@ -63,7 +63,7 @@ function love.conf(t)
 	t.url = "http://lytedev.com/worldspark"
 	t.identity = "worldspark"
 	t.titleVersion = "0.1.0"
-	t.version = "0.8.0"
+	-- t.version = "0.10.1"
 
 	t.release = false
 
@@ -75,12 +75,14 @@ function love.conf(t)
 	t.console = false
 
 
-	t.screen.scaleHeight = 180
-	t.screen.width = 640
-	t.screen.height = 360
-	t.screen.fullscreen = false
-	t.screen.vsync = false
-	t.screen.fsaa = 0
+	t.window.scaleHeight = 180
+	t.window.width = 640 * 2
+	t.window.height = 360 * 2
+	t.window.fullscreen = false
+	t.window.vsync = false
+	t.window.fsaa = 0
+
+	t.window.highdpi = true
 
 	t.modules.joystick = true
 	t.modules.audio = true

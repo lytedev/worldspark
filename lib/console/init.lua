@@ -35,36 +35,35 @@ function Console:init(font, height)
 	self.inputCursor = 1
 	self.input = ""
 	self.commandPrefix = '/'
-    love.keyboard.setKeyRepeat(0.4, 0.02)
+	love.keyboard.setKeyRepeat(true)
 
-	self.timestampColor = {255, 255, 255, 50}
-	self.backgroundColor = {17, 17, 17, 255}
-	self.borderColor = {34, 34, 34, 255}
-	self.inputColor = {255, 255, 255, 255}
-	self.inactiveInputColor = {255, 255, 255, 128}
+	self.timestampColor = {1.0, 1.0, 1.0, 1.0}
+	self.backgroundColor = {0.05, 0.05, 0.05, 1.0}
+	self.borderColor = {0.1, 0.1, 0.1, 1.0}
+	self.inputColor = {1.0, 1.0, 1.0, 1.0}
+	self.inactiveInputColor = {1.0, 1.0, 1.0, 0.5}
 
 	self.logFileTimeStampFormat = "%Y-%m-%d_%H-%M-%S"
 	self.logTimeStampFormat = "%Y-%m-%d %H:%M:%S"
-	love.filesystem.mkdir("logs")
-	self.logFile = love.filesystem.newFile("logs/" .. os.date(self.logFileTimeStampFormat) .. "_" .. config.identity .. ".log")
+	self.logFile = love.filesystem.newFile("log_" .. os.date(self.logFileTimeStampFormat) .. "_" .. config.identity .. ".log")
 	self.logFile:open("a")
 
 	self.typeColors = {
-		normal={255, 255, 255, 100}, 
-		["n/a"]={255, 0, 255, 255},
-		server={120, 150, 100, 255}, 
-		client={0, 150, 150, 255}, 
-		game={0, 100, 200, 255}, 
-		warning={255, 200, 0, 255}, 
-		info={0, 150, 255, 255}, 
-		good={150, 255, 40, 255}, 
-		console={50, 255, 255, 255}, 
-		error={255, 40, 0, 255}, 
-		fatal={255, 0, 255, 255}
+		normal={1.0, 1.0, 1.0, 0.4}, 
+		["n/a"]={1.0, 0, 1.0, 1.0},
+		server={0.25, 0.4, 0.4, 1.0}, 
+		client={0, 0.5, 0.5, 1.0}, 
+		game={0, 0.4, 0.8, 1.0}, 
+		warning={1.0, 0.8, 0, 1.0}, 
+		info={0, 0.5, 1.0, 1.0}, 
+		good={0.5, 1.0, 0.2, 1.0}, 
+		console={0.2, 1.0, 1.0, 1.0}, 
+		error={1.0, 0.2, 0, 1.0}, 
+		fatal={1.0, 0, 1.0, 1.0}
 	}
 
 	self.textColors = {
-		normal={255, 255, 255, 100}
+		normal={1.0, 1.0, 1.0, 0.4}
 	}
 
 	self.commandHandler = {}
@@ -138,7 +137,7 @@ function Console:measureMessage(msg, x, y)
 		w = w - self.indent
 	end
 	local rw, al = self.font:getWrap(msg.text, w)
-	lines = lines + al
+	lines = lines + #al
 	return (self.lineHeight * lines) + self.messageSpace
 end
 
@@ -164,7 +163,7 @@ function Console:drawMessage(msg, x, y)
 		w = w - self.indent
 	end
 	local rw, al = self.font:getWrap(msg.text, w)
-	lines = lines + al
+	lines = lines + #al
 
 	love.graphics.setColor(self.textColors[msg.from] or self.textColors.normal)
 	love.graphics.printf(msg.text, x, y, w, "left")
@@ -257,10 +256,6 @@ function Console:keypressed(k, u)
 			self.inputCursor = 0
 		elseif k == "return" then
 			self:handleInput()
-		elseif u > 31 and u < 127 then
-			local ui = string.char(u)
-			self.input = string.insert(self.input, ui, self.inputCursor)
-			self.inputCursor = self.inputCursor + string.len(ui)
 		elseif self.size[2] < 0 then
 			if k == "pageup" then
 				self.scroll = self.scroll - (self.size[2] / 2)
@@ -280,6 +275,12 @@ function Console:keypressed(k, u)
 	elseif self.inputCursor > string.len(self.input) then
 		self.inputCursor = string.len(self.input)
 	end
+end
+
+function Console:textinput(input)
+	local ui = input
+	self.input = string.insert(self.input, ui, self.inputCursor)
+	self.inputCursor = self.inputCursor + string.len(ui)
 end
 
 function Console:addCommand(input)

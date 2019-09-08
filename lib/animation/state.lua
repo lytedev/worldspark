@@ -148,7 +148,7 @@ end
 
 function State:draw(position)
     love.graphics.setColor(self.overlay)
-    love.graphics.drawq(self.image, self.quad, (position.x + self.offset.x), (position.y + self.offset.y))
+    love.graphics.draw(self.image, self.quad, (position.x + self.offset.x), (position.y + self.offset.y))
 end
 
 return State
